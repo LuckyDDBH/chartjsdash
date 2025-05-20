@@ -30,9 +30,21 @@ export async function createLineChart() {
     console.log(error)
   }
 
+  //const labels = data.map(item => item.YQ);   //<---Change this to name of the feature
+  //const values = data.map(item => item.Value);//<---Change this to the shap value of the feature
 
-  const labels = data.map(item => item.YQ);
-  const values = data.map(item => item.Value);
+  const vizArgs = args.visualization;
+  const labels = [];
+  const values = [];
+  //Collect relevant data about patient prediction from args.json
+  for (let i = 4; i <= 13; i++) {
+    const rankKey = `ShapRank${i}`;
+    const valueKey = `ShapValue${i}`;
+    if (vizArgs[rankKey] !== undefined && vizArgs[valueKey] !== undefined) {
+      labels.push(vizArgs[rankKey]);
+      values.push(vizArgs[valueKey]);
+    }
+  }
 
   setupXYFiltering(labels, values);
 
@@ -44,11 +56,11 @@ export async function createLineChart() {
   }
 
   const chart = new Chart(ctx, {
-    type: args.visualization.type,
+    type: "bar",
     data: {
       labels: labels,
       datasets: [{
-        label: 'Timeline Chartsss',
+        label: 'mRS prediction SHAP values', //<---Change this to name of what we are showing
         data: values,
         borderColor: '#ff4081',
         borderWidth: 2,
